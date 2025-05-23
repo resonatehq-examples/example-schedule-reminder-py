@@ -2,6 +2,7 @@
 import datetime, json, os
 # Open AI
 from openai import OpenAI
+from openai.types.chat import ChatCompletionMessage
 # Resonate HQ
 from resonate import Resonate
 
@@ -58,6 +59,15 @@ TOOLS = [
         }
     }
 ]
+
+def prompt(ctx, messages):
+    response = aiclient.chat.completions.create(
+        model="gpt-4-1106-preview",
+        messages=messages,
+        tools=TOOLS,
+        tool_choice="auto"
+    )
+    return response.choices[0].message.to_dict()
 
 # --- Tool Handlers ---
 def schedule(ctx, args):
@@ -116,14 +126,9 @@ def schedule_reminder(ctx, question, max_steps=5):
 
     for step in range(max_steps):
 
-        response = aiclient.chat.completions.create(
-            model="gpt-4-1106-preview",
-            messages=messages,
-            tools=TOOLS,
-            tool_choice="auto"
-        )
-
-        message = response.choices[0].message
+        # Prompt the LLM
+        message = yield ctx.lfc(prompt, messages)
+        message = ChatCompletionMessage.model_validate(message)
 
         messages.append(message)
 
