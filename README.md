@@ -18,6 +18,52 @@ With Distributed Async Await, the scheduling logic is dead simple:
 - The system automatically resumes when the timer expires
 - The AI then immediately sends the reminder
 
+```mermaid
+sequenceDiagram
+    participant User
+    participant Agent
+    participant GPT-4
+    participant Clock
+    participant Schedule
+    participant Reminder
+
+    User->>Agent: Remind me tomorrow at 8am<br/>to check out Resonate
+
+    Agent->>GPT-4: SYSTEM PROMPT<br/>------------------------------------<br/>Remind me tomorrow at 8am<br/>to check out Resonate
+
+    GPT-4-->>Agent: call(current_time)
+
+    Agent->>Clock: current_time()
+    Clock-->>Agent: 2025-06-01T12:00:00Z
+
+    Agent->>GPT-4: All previous messages<br/>------------------------------------<br/>2025-06-01T12:00:00Z
+    GPT-4-->>Agent: call(schedule, timestamp="2025-06-02T08:00:00Z")
+
+    Agent->>Schedule: schedule(timestamp="2025-06-02T08:00:00Z")
+
+    activate Schedule
+
+    Note over Schedule: Sleep for hours, days, weeks, or months
+
+    Schedule-->>Agent: The current time is 2025-06-02T08:00:00Z
+
+    deactivate Schedule
+
+    Agent->>GPT-4: All previous messages<br/>------------------------------------<br/>The current time is<br/>2025-06-02T08:00:00Z
+
+    GPT-4-->>Agent: call(reminder, message="Check out Resonate")
+
+    Agent->>Reminder: reminder(message="Check out Resonate")
+
+    Note over Reminder: Check out Resonate
+
+    Reminder-->>Agent: The reminder has been sent successfully
+
+    Agent->>GPT-4: All previous messages<br/>------------------------------------<br/>The reminder has been sent
+
+     GPT-4-->>Agent: No tool call
+```
+
 # Stateful Agent = Stateless Agent + Stateful Execution
 
 The AI Agent does not keep track of state or time, all of which is handled by Resonate: The Agent is part of a durable runtime that can wait hours, days, or weeks and still complete the task. The runtime wakes the Agent when it's time to act.
@@ -149,14 +195,11 @@ uv sync
 export OPENAI_API_KEY="sk-..."
 ```
 
-Add your OpenAI API key
-Set your OpenAI key as an environment variable:
-
-export OPENAI_API_KEY="sk-..."
-
 ### 4. Run the Agent
 
+```
 python reminder_assistant.py
+```
 
 You can test the agent by modifying the prompt at the bottom of the file:
 
