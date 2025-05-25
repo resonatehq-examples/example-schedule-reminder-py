@@ -115,20 +115,18 @@ The core interaction between GPT and the tools happens inside a Resonate functio
 ```
 @resonate.register
 def schedule_reminder(ctx, question, max_steps=5):
+
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": question}
     ]
 
     for step in range(max_steps):
-        response = aiclient.chat.completions.create(
-            model="gpt-4-1106-preview",
-            messages=messages,
-            tools=TOOLS,
-            tool_choice="auto"
-        )
 
-        message = response.choices[0].message
+        # Prompt the LLM
+        message = yield ctx.lfc(prompt, messages)
+        message = ChatCompletionMessage.model_validate(message)
+
         messages.append(message)
 
         if message.tool_calls:
@@ -137,6 +135,7 @@ def schedule_reminder(ctx, question, max_steps=5):
                 tool_args = json.loads(tool_call.function.arguments)
 
                 handler = None
+
                 match tool_name:
                     case "schedule":
                         handler = schedule
@@ -145,7 +144,7 @@ def schedule_reminder(ctx, question, max_steps=5):
                     case "current_time":
                         handler = current_time
                     case _:
-                    raise ValueError(f"Unknown tool: {tool_name}")
+                        handler = None
 
                 result = yield ctx.lfc(handler, tool_args)
 
