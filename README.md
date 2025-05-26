@@ -1,9 +1,10 @@
-# Reminder Assistant
-## Dead Simple Autononomous Agents with Resonate's Distributed Async Await
+# Reminder AI Assistant | Resonate Example Application
 
-An autonomous, long-running **Reminder Assistant** powered by OpenAI and Resonate's Distributed Async Await.
+**Dead Simple Autononomous Agents with Resonate's Distributed Async Await**
 
-# Overview
+This example application showcases an autonomous, long-running **Reminder Assistant** powered by OpenAI and Resonate's Distributed Async Await.
+
+## Overview
 
 The Reminder Assistant allows users to schedule reminders through natural language:
 
@@ -14,6 +15,7 @@ Remind me first thing in the morning, bright and early, to check out https://res
 The Reminder Assistant is implemented as an agent loop using the Resonate's Distributed Async Await. Distributed Async Await enables durable suspension and resumption of long-lived executions.
 
 With Distributed Async Await, the scheduling logic is dead simple:
+
 - The schedule function yields/sleeps until the target time
 - The system automatically resumes when the timer expires
 - The AI then immediately sends the reminder
@@ -64,13 +66,13 @@ sequenceDiagram
      GPT-4-->>Agent: No tool call
 ```
 
-# Stateful Agent = Stateless Agent + Stateful Execution
+## Stateful Agent = Stateless Agent + Stateful Execution
 
 The AI Agent does not keep track of state or time, all of which is handled by Resonate: The Agent is part of a durable runtime that can wait hours, days, or weeks and still complete the task. The runtime wakes the Agent when it's time to act.
 
 This eliminates the need for traditional scheduling infrastructure like cron jobs, message queues, or databases.
 
-## Open AI GPT-4 & Tool Calls
+### Open AI GPT-4 & Tool Calls
 
 The assistant leverages OpenAI’s gpt-4 model with structured function calls.
 
@@ -101,16 +103,16 @@ The model autonomously chooses from these tools:
 **Tool Calls**
 
 | Tool         | Purpose                                         |
-|--------------|-------------------------------------------------|
+| ------------ | ----------------------------------------------- |
 | schedule     | Sleep until a given UTC time in ISO 8601 format |
 | reminder     | Send a message as a reminder                    |
 | current_time | Return current UTC time in ISO 8601 format      |
 
-## Resonate
+### Resonate
 
 The core interaction between GPT and the tools happens inside a Resonate function. The assistant repeatedly:
 
-### Agent Loop
+#### Agent Loop
 
 ```
 @resonate.register
@@ -153,7 +155,7 @@ def schedule_reminder(ctx, question, max_steps=5):
             break
 ```
 
-### Durable Suspension and Durable Resumption
+#### Durable Suspension and Durable Resumption
 
 Besides LLM, the highlight of this system is Resonate’s durable execution model.
 
@@ -165,36 +167,37 @@ def schedule(ctx, args):
 ```
 
 Resonate
+
 - Suspends the computation
 - Waits for hours, days, weeks, or months
 - Resumes the computation－even on a different process
 
-**A procedural programming model on top of an event driven execution model. No databases, no queues, no timers, no polling—just functions and promises
+**A procedural programming model on top of an event driven execution model. No databases, no queues, no timers, no polling—just functions and promises**
 
-## Installation & Usage
+### Installation & Usage
 
 This project uses uv, a popular Python package manager and virtual environment tool.
 
-### 1. Clone the repository
+#### 1. Clone the repository
 
 ```
 git clone https://github.com/resonatehq/reminder-assistant.git
 cd reminder-assistant
 ```
 
-### 2.  Setup environment
+#### 2. Setup environment
 
 ```
 uv sync
 ```
 
-### 3. Set your OpenAI API Key
+#### 3. Set your OpenAI API Key
 
 ```
 export OPENAI_API_KEY="sk-..."
 ```
 
-### 4. Run the Agent
+#### 4. Run the Agent
 
 ```
 python reminder_assistant.py
