@@ -1,6 +1,6 @@
 # Reminder AI Assistant | Resonate Example Application
 
-**Dead Simple Autononomous Agents with Resonate's Distributed Async Await**
+**Dead Simple Autonomous Agents with Resonate's Distributed Async Await**
 
 This example application showcases an autonomous, long-running **Reminder Assistant** powered by OpenAI and Resonate's Distributed Async Await.
 Built using a minimal agent loop, the assistant can wait hours, days, or weeks without relying on cron jobs, queues, or databases－thanks to Resonate's durable execution model.
@@ -13,13 +13,13 @@ The Reminder Assistant allows users to schedule reminders through natural langua
 Remind me first thing in the morning, bright and early, to check out https://resonatehq.io
 ```
 
-The Reminder Assistant is implemented as an agent loop using the Resonate's Distributed Async Await. Distributed Async Await enables durable suspension and resumption of long-lived executions.
+The Reminder Assistant is implemented as an agent loop using Resonate's Distributed Async Await. Distributed Async Await enables durable suspension and resumption of long-lived executions.
 
 With Distributed Async Await, the scheduling logic is dead simple:
 
-- The schedule function yields/sleeps until the target time
+- The schedule function yields (i.e., sleeps) until the target time
 - The system automatically resumes when the timer expires
-- The AI then immediately sends the reminder
+- The AI immediately sends the reminder afterward
 
 ```mermaid
 sequenceDiagram
@@ -69,7 +69,7 @@ sequenceDiagram
 
 ## Stateful Agent = Stateless Agent + Stateful Execution
 
-The AI Agent does not keep track of state or time, all of which is handled by Resonate: The Agent is part of a durable runtime that can wait hours, days, or weeks and still complete the task. The runtime wakes the Agent when it's time to act.
+The AI Agent does not keep track of state or time, both of which are handled by Resonate: The Agent is part of a durable runtime that can wait hours, days, or weeks and still complete the task. The runtime wakes the Agent when it's time to act.
 
 This eliminates the need for traditional scheduling infrastructure like cron jobs, message queues, or databases.
 
@@ -204,7 +204,7 @@ export OPENAI_API_KEY="sk-..."
 python reminder_assistant.py
 ```
 
-You can test the agent by modifying the prompt at the bottom of the file:
+To test the agent, modify the prompt at the bottom of the file:
 
 ```
 handle = schedule_reminder.run("remindme.1", "Remind me tomorrow at 8am to check out Resonate")
