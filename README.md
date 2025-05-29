@@ -3,6 +3,7 @@
 **Dead Simple Autononomous Agents with Resonate's Distributed Async Await**
 
 This example application showcases an autonomous, long-running **Reminder Assistant** powered by OpenAI and Resonate's Distributed Async Await.
+Built using a minimal agent loop, the assistant can wait hours, days, or weeks without relying on cron jobs, queues, or databases－thanks to Resonate's durable execution model.
 
 ## Overview
 
